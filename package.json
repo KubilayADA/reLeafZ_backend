@@ -1,0 +1,27 @@
+{
+  "name": "releafz_backend",
+  "version": "1.0.0",
+  "description": "reLeafZ backend - MVP for Germany medical cannabis platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KubilayADA/reLeafZ_backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KubilayADA/reLeafZ_backend/issues"
+  },
+  "homepage": "https://github.com/KubilayADA/reLeafZ_backend#readme",
+  "dependencies": {
+    "@prisma/client": "^6.16.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "prisma": "^6.16.1"
+  }
+}
