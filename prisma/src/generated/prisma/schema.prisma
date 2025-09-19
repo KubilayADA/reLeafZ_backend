@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
+  password String
+  role     Role
+  patient  Patient?
+  doctor   Doctor?
+  pharmacy Pharmacy?
+}
+
+enum Role {
+  PATIENT
+  DOCTOR
+  PHARMACY
+  ADMIN
+}
+
+model Patient {
+  id                Int                @id @default(autoincrement())
+  user              User               @relation(fields: [userId], references: [id])
+  userId            Int                @unique
+  treatmentRequests TreatmentRequest[]
+  prescriptions     Prescription[]
+}
+
+model Doctor {
+  id                Int                @id @default(autoincrement())
+  user              User               @relation(fields: [userId], references: [id])
+  userId            Int                @unique
+  treatmentRequests TreatmentRequest[]
+  prescriptions     Prescription[]
+}
+
+model Pharmacy {
+  id            Int            @id @default(autoincrement())
+  user          User           @relation(fields: [userId], references: [id])
+  userId        Int            @unique
+  name          String
+  contact       String
+  products      Product[]
+  prescriptions Prescription[]
+}
+
+model TreatmentRequest {
+  id        Int      @id @default(autoincrement())
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  patientId Int
+  doctor    Doctor?  @relation(fields: [doctorId], references: [id])
+  doctorId  Int?
+  symptoms  String
+  createdAt DateTime @default(now())
+}
+
+model Prescription {
+  id         Int      @id @default(autoincrement())
+  patient    Patient  @relation(fields: [patientId], references: [id])
+  patientId  Int
+  doctor     Doctor   @relation(fields: [doctorId], references: [id])
+  doctorId   Int
+  pharmacy   Pharmacy @relation(fields: [pharmacyId], references: [id])
+  pharmacyId Int
+  order      Order?   @relation(fields: [orderId], references: [id])
+  orderId    Int?     @unique
+  createdAt  DateTime @default(now())
+}
+
+model Product {
+  id         Int    @id @default(autoincrement())
+  name       String // ex "Amnesia Haze"
+  form       Form // flower, oil, etc.
+  thcPercent Float // ex 22.5
+  cbdPercent Float // ex. 0.1
+  price      Float // Price per unit (gram, bottle, etc.)
+  unit       String // ex "gram", "ml"
+  stock      Int // Number of units in stock
+
+  pharmacy   Pharmacy @relation(fields: [pharmacyId], references: [id])
+  pharmacyId Int
+
+  orderItems OrderItem[]
+}
+
+enum Form {
+  FLOWER
+  OIL
+  EXTRACT
+  CAPSULE
+  SPRAY
+}
+
+model Order {
+  id           Int           @id @default(autoincrement())
+  prescription Prescription?
+  items        OrderItem[]
+  createdAt    DateTime      @default(now())
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int
+}
