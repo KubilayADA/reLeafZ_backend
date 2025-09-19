@@ -67,13 +67,20 @@ model TreatmentRequest {
   doctor     Doctor?  @relation(fields: [doctorId], references: [id])
   doctorId   Int?
   symptoms   String
+  fullName   String
+  email      String
+  phone      String
+  city       String
   createdAt  DateTime @default(now())
+
 }
 
 model Prescription {
   id           Int       @id @default(autoincrement())
   patient      Patient   @relation(fields: [patientId], references: [id])
   patientId    Int
+  patientName  String
+  patientZip   String
   doctor       Doctor    @relation(fields: [doctorId], references: [id])
   doctorId     Int
   pharmacy     Pharmacy  @relation(fields: [pharmacyId], references: [id])
